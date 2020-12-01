@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import pygame
 import sys
 sys.path.append("game/")
 import Boll_slide as game
