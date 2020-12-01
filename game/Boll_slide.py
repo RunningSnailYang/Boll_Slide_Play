@@ -1,4 +1,5 @@
 import Boll_slide_load
+import time
 import pygame
 import random
 from sys import exit
@@ -10,10 +11,11 @@ SCREENHEIGHT = 700 # Set the height of the screen
 PLATFORM_SPEED = -4 # Set the speed of the platforms' upward movement
 DOWN_SPEED = 4 # Set the speed of the boll's downward movement
 ROW_SPEED = 10 # Set the speed of the boll's lateral movement
+ACC = 1
 pygame.init() # Initialize the game
 # Create the clock, which is used to control the loop frequency of the game
 FPSCLOCK = pygame.time.Clock()
-SCREEN = pygame.display.set_mode((SCREENWIDTH,SCREENHEIGHT))
+SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 pygame.display.set_caption('Boll-slide')
 
 # IMAGES: Dict of the objects' images
@@ -21,15 +23,33 @@ pygame.display.set_caption('Boll-slide')
 # the hitmask is a list of lists. shape: [width, height], type: bool
 IMAGES, HITMASKS = Boll_slide_load.load()
 STAB = (-50, -10)
+
+# Set font colors
+TIMECOLOR = (30, 144, 255)
+SCORECOLOR = (255, 255, 0)
+ENDCOLOR = (255, 140, 0)
+
+# Create font objects
+timefontObj = pygame.font.SysFont("comicsansms", 150)
+scorefontObj = pygame.font.SysFont("comicsansms", 50)
+endfontObj = pygame.font.SysFont("comicsansms", 90)
+endSurfaceObj = endfontObj.render('Game Over', True, ENDCOLOR)
+endRectObj = endSurfaceObj.get_rect()
+endRectObj.center = (345, 350)
+
 class GameState:
     # Create game class
-    def __init__(self):
-        self.socre = 0
-        self.playerx = 350 # Set initial x-value of the boll
-        self.playery = 230 # Set initial y-value of the boll
+    def __init__(self, state):
+        # state: The state of the game, which can be 'start', 'run', 'end'
+        self.playerx = 320 # Set initial x-value of the boll
+        self.playery = 240 # Set initial y-value of the boll
         self.platform = [] # A queue used to store the current platforms on the screen
         self.move_x = 0 # The speed of movement on x-coordinate
         self.move_y = 0 # The speed of movement on y-coordinate
+        self.state = state
+        self.basetime = time.time()
+        self.button_state = 'up'
+        self.score = 0
         # Initialize 5 random safe platforms on the screen
         for i in range(5):
             platform = self.Randomplatform() # Generate a platform on the top randomly
@@ -37,7 +57,64 @@ class GameState:
             platform['platform'] = 0 # Make the platform safe
             self.platform.append(platform) # Add the platform in the platform queue
 
-    def frame_step(self): # Core of running of a game
+    def frame_step(self):  # Core of running of the game
+        # Set the frequency of the loop, which should be written in the loop
+        FPSCLOCK.tick(FPS)
+        if self.state == 'start': self.start()
+        elif self.state == 'run': self.run()
+        elif self.state == 'end': self.end()
+        else: raise TypeError
+
+    def start(self): # The loop step in 'start' state
+        self.playery += self.move_y
+        if self.playery >= 355: self.move_y = -self.move_y
+        else: self.move_y += ACC
+        # if self.move_y == 0: self.playery = 230
+        SCREEN.blit(IMAGES['background'], (0, 0))
+        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
+        SCREEN.blit(IMAGES['platform1'], (245, 400))
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                exit()
+            if event.type == MOUSEBUTTONDOWN and event.button == 1 and \
+               280 <= event.pos[0] <= 410 and 500 <= event.pos[1] <= 540:
+                self.button_state = 'down' # The left button is pushed down
+            elif event.type == MOUSEBUTTONUP and self.button_state == 'down':
+                self.button_state= 'up'
+                self.__init__('run') # Enter 'run' state
+            else: pass
+        if self.button_state == 'down': SCREEN.blit(IMAGES['button_down'], (280, 487))
+        elif self.button_state == 'up': SCREEN.blit(IMAGES['button_up'], (280, 483))
+        else: raise TypeError
+        pygame.display.update()  # Update the display of the screen
+
+    def run(self): # The loop step in 'run' state
+        SCREEN.blit(IMAGES['background'], (0, 0))
+        for i in range(len(self.platform)):
+            platformCup = self.platform[i]
+            if platformCup['platform'] == 1:
+                SCREEN.blit(IMAGES['platform2'], (platformCup['x'], platformCup['y']))
+            if platformCup['platform'] == 0:
+                SCREEN.blit(IMAGES['platform1'], (platformCup['x'], platformCup['y']))
+        SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
+        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        scoreSurfaceObj = scorefontObj.render('score: %d' % self.score, True, SCORECOLOR)
+        scoreRectObj = scoreSurfaceObj.get_rect()
+        scoreRectObj.topleft = (20, 20)
+        SCREEN.blit(scoreSurfaceObj, scoreRectObj)
+        # Three seconds countdown
+        time_dif = time.time() - self.basetime
+        if time_dif <= 3:
+            if time_dif <= 1: timeSurfaceObj = timefontObj.render('3', True, TIMECOLOR)
+            elif time_dif <= 2: timeSurfaceObj = timefontObj.render('2', True, TIMECOLOR)
+            else: timeSurfaceObj = timefontObj.render('1', True, TIMECOLOR)
+            timeRectObj = timeSurfaceObj.get_rect()
+            timeRectObj.center = (345, 350)
+            SCREEN.blit(timeSurfaceObj, timeRectObj)
+            pygame.display.update()  # Update the display of the screen
+            return
+        pygame.display.update()  # Update the display of the screen
         # Check the crash
         action = self.isCrash()
         # Check the position of the boll
@@ -67,6 +144,7 @@ class GameState:
             self.move_y = PLATFORM_SPEED
         else:
             self.move_y = DOWN_SPEED
+            self.score += self.move_y
         self.playery += self.move_y
 
         # Rerange the platforms
@@ -77,24 +155,39 @@ class GameState:
         if self.platform[len(self.platform)-1]['y'] < 560:
             self.platform.append(self.Randomplatform())
 
-        # If the boll die, initial it
+        # If the boll die, enter 'end' state
         if action == 'die':
-            self.__init__()
+            self.state = 'end'
 
-        # Draw the sprites
+    def end(self): # The loop step in 'end' state
         SCREEN.blit(IMAGES['background'], (0, 0))
         for i in range(len(self.platform)):
             platformCup = self.platform[i]
             if platformCup['platform'] == 1:
-                SCREEN.blit(IMAGES['platform2'],(platformCup['x'], platformCup['y']))
+                SCREEN.blit(IMAGES['platform2'], (platformCup['x'], platformCup['y']))
             if platformCup['platform'] == 0:
-                SCREEN.blit(IMAGES['platform1'],(platformCup['x'], platformCup['y']))
-        SCREEN.blit(IMAGES['player'],(self.playerx, self.playery))
-        SCREEN.blit(IMAGES['stab'], (-50,-10))
-        pygame.display.update() # Update the display of the screen
-        # Set the frequency of the loop, which should be written in the loop
-        FPSCLOCK.tick(FPS)
-
+                SCREEN.blit(IMAGES['platform1'], (platformCup['x'], platformCup['y']))
+        SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
+        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        SCREEN.blit(endSurfaceObj, endRectObj)
+        scoreSurfaceObj = scorefontObj.render('score: %d' % self.score, True, SCORECOLOR)
+        scoreRectObj = scoreSurfaceObj.get_rect()
+        scoreRectObj.topleft = (20, 20)
+        SCREEN.blit(scoreSurfaceObj, scoreRectObj)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                exit()
+            if event.type == MOUSEBUTTONDOWN and event.button == 1 and \
+               280 <= event.pos[0] <= 410 and 500 <= event.pos[1] <= 540:
+                self.button_state = 'down'
+            elif event.type == MOUSEBUTTONUP and self.button_state == 'down':
+                self.button_state= 'up'
+                self.__init__('run')
+            else: pass
+        if self.button_state == 'down': SCREEN.blit(IMAGES['button_down'], (280, 487))
+        elif self.button_state == 'up': SCREEN.blit(IMAGES['button_up'], (280, 483))
+        else: raise TypeError
+        pygame.display.update()  # Update the display of the screen
 
     def isCrash(self):
         # pygame.Rect(left, top, width, height)

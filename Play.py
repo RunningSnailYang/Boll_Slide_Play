@@ -3,7 +3,7 @@ import sys
 sys.path.append("game/")
 import Boll_slide as game
 def main():
-    game_state = game.GameState()
+    game_state = game.GameState('start')
     while True:
         game_state.frame_step()
 
