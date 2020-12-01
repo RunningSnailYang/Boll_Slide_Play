@@ -8,6 +8,7 @@ def load():
     IMAGES['stab'] = pygame.image.load('assets/sprites/stab1.png').convert_alpha()
     IMAGES['background'] = pygame.image.load('assets/sprites/background1.jpg').convert()
 
+    # getHitmask1 return a list.
     HITMASKS['player'] = getHitmask1(IMAGES['player'])
     HITMASKS['platform1'] = getHitmask1(IMAGES['platform1'])
     HITMASKS['platform2'] = getHitmask1(IMAGES['platform2'])
@@ -15,13 +16,14 @@ def load():
     return IMAGES, HITMASKS
 
 def getHitmask1(image):
-    """returns a hitmask using an image's alpha."""
+    # Returns a hitmask using an image's alpha.
     mask = []
     for x in range(image.get_width()):
         mask.append([])
         for y in range(image.get_height()):
+            # image.get_at((x,y))[3]: The channel of alpha
             mask[x].append(bool(image.get_at((x,y))[3]))
-    return mask
+    return mask # mask: shape: [image.get_width(), image.get_height()]
     
 
 
