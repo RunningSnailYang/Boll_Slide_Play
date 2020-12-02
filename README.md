@@ -24,6 +24,7 @@ pip install pyinstaller==3.5
 ```
 
 ### Generate stand-alone executables
+For ubuntu system, the command of generating stand-alone executables is:
 ```
 pyinstaller Play.py \
 --add-data 'assets/sprites/title.png:assets/sprites' \ 
@@ -34,4 +35,8 @@ pyinstaller Play.py \
 --add-data 'assets/sprites/up.png:assets/sprites' \
 --add-data 'assets/sprites/down.png:assets/sprites' \
 --add-data 'assets/sprites/background1.jpg:assets/sprites'
+```
+You can directly copy this:
+```
+pyinstaller Play.py --add-data 'assets/sprites/title.png:assets/sprites' --add-data 'assets/sprites/Boll1.png:assets/sprites' --add-data 'assets/sprites/platform11.png:assets/sprites' --add-data 'assets/sprites/platform21.png:assets/sprites' --add-data 'assets/sprites/stab1.png:assets/sprites' --add-data 'assets/sprites/up.png:assets/sprites' --add-data 'assets/sprites/down.png:assets/sprites' --add-data 'assets/sprites/background1.jpg:assets/sprites'
 ```
