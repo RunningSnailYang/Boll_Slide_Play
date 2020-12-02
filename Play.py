@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import sys
-sys.path.append("game/")
-import Boll_slide as game
+from game import Boll_slide
 def main():
-    game_state = game.GameState('start')
+    game_state = Boll_slide.GameState('start')
     while True:
         game_state.frame_step()
 

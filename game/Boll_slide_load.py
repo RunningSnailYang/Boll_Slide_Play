@@ -2,14 +2,14 @@ import pygame
 def load():
     IMAGES, HITMASKS = {}, {}
 
-    IMAGES['title'] = pygame.image.load('assets/sprites/title.png').convert_alpha()
-    IMAGES['player'] = pygame.image.load('assets/sprites/Boll1.png').convert_alpha()
-    IMAGES['platform1'] = pygame.image.load('assets/sprites/platform11.png').convert_alpha()
-    IMAGES['platform2'] = pygame.image.load('assets/sprites/platform21.png').convert_alpha()
-    IMAGES['stab'] = pygame.image.load('assets/sprites/stab1.png').convert_alpha()
-    IMAGES['button_up'] = pygame.image.load('assets/sprites/up.png').convert_alpha()
-    IMAGES['button_down'] = pygame.image.load('assets/sprites/down.png').convert_alpha()
-    IMAGES['background'] = pygame.image.load('assets/sprites/background1.jpg').convert()
+    IMAGES['title'] = pygame.image.load('./assets/sprites/title.png').convert_alpha()
+    IMAGES['player'] = pygame.image.load('./assets/sprites/Boll1.png').convert_alpha()
+    IMAGES['platform1'] = pygame.image.load('./assets/sprites/platform11.png').convert_alpha()
+    IMAGES['platform2'] = pygame.image.load('./assets/sprites/platform21.png').convert_alpha()
+    IMAGES['stab'] = pygame.image.load('./assets/sprites/stab1.png').convert_alpha()
+    IMAGES['button_up'] = pygame.image.load('./assets/sprites/up.png').convert_alpha()
+    IMAGES['button_down'] = pygame.image.load('./assets/sprites/down.png').convert_alpha()
+    IMAGES['background'] = pygame.image.load('./assets/sprites/background1.jpg').convert()
 
     # getHitmask1 return a list.
     HITMASKS['player'] = getHitmask1(IMAGES['player'])

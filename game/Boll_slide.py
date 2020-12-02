@@ -30,9 +30,9 @@ SCORECOLOR = (255, 255, 0)
 ENDCOLOR = (255, 140, 0)
 
 # Create font objects
-timefontObj = pygame.font.SysFont("comicsansms", 150)
-scorefontObj = pygame.font.SysFont("comicsansms", 50)
-endfontObj = pygame.font.SysFont("comicsansms", 90)
+timefontObj = pygame.font.SysFont("liberationserif", 150)
+scorefontObj = pygame.font.SysFont("liberationserif", 50)
+endfontObj = pygame.font.SysFont("liberationserif", 90)
 endSurfaceObj = endfontObj.render('Game Over', True, ENDCOLOR)
 endRectObj = endSurfaceObj.get_rect()
 endRectObj.center = (345, 350)
