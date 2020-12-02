@@ -71,7 +71,8 @@ class GameState:
         else: self.move_y += ACC
         # if self.move_y == 0: self.playery = 230
         SCREEN.blit(IMAGES['background'], (0, 0))
-        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        SCREEN.blit(IMAGES['stab'], (-50, -15))
+        SCREEN.blit(IMAGES['title'], (170, 100))
         SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
         SCREEN.blit(IMAGES['platform1'], (245, 400))
         for event in pygame.event.get():
@@ -98,7 +99,7 @@ class GameState:
             if platformCup['platform'] == 0:
                 SCREEN.blit(IMAGES['platform1'], (platformCup['x'], platformCup['y']))
         SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
-        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        SCREEN.blit(IMAGES['stab'], (-50, -15))
         scoreSurfaceObj = scorefontObj.render('score: %d' % self.score, True, SCORECOLOR)
         scoreRectObj = scoreSurfaceObj.get_rect()
         scoreRectObj.topleft = (20, 20)
@@ -168,7 +169,7 @@ class GameState:
             if platformCup['platform'] == 0:
                 SCREEN.blit(IMAGES['platform1'], (platformCup['x'], platformCup['y']))
         SCREEN.blit(IMAGES['player'], (self.playerx, self.playery))
-        SCREEN.blit(IMAGES['stab'], (-50, -10))
+        SCREEN.blit(IMAGES['stab'], (-50, -15))
         SCREEN.blit(endSurfaceObj, endRectObj)
         scoreSurfaceObj = scorefontObj.render('score: %d' % self.score, True, SCORECOLOR)
         scoreRectObj = scoreSurfaceObj.get_rect()
@@ -200,7 +201,7 @@ class GameState:
             platformCup = pygame.Rect(self.platform[i]['x'],self.platform[i]['y'], 200,35)
             platformtag.append(self.platform[i]['platform']) # Type of the platform
             platformRect.append(platformCup)
-        stabRect = pygame.Rect(-50,-10,700,35) # Rect of the top stabs
+        stabRect = pygame.Rect(-50,-15,700,35) # Rect of the top stabs
         for i in range(len(platformtag)):
             # flagCup can be 'maintain', 'die', 'left', 'right', 'follow'
             if platformtag[i] == 1: # The platform is dangerous
